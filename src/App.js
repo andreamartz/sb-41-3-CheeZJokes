@@ -1,10 +1,12 @@
 import React from "react";
-import JokeList from "./JokeList";
+// import JokeList from "./JokeList";
+import JokeListClassBased from "./JokeListClassBased";
 
 function App() {
   return (
     <div className="App">
-      <JokeList />
+      {/*<JokeList />*/}
+      <JokeListClassBased numJokesToGet={8}/>
     </div>
   );
 }
