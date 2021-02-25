@@ -3,7 +3,7 @@ import axios from "axios";
 import Joke from "./Joke";
 import "./JokeList.css";
 
-class JokeList extends Component {
+class JokeListClassBased extends Component {
   static defaultProps = {numJokesToGet: 10}
   constructor({ numJokesToGet }) {
     super({ numJokesToGet });
@@ -68,5 +68,5 @@ class JokeList extends Component {
   }
 }
 
-export default JokeList;
+export default JokeListClassBased;
 
