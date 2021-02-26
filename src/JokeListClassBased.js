@@ -11,15 +11,12 @@ class JokeListClassBased extends Component {
     this.jokesInitialState = [];
     this.state = { jokes: this.jokesInitialState };  // initial state for jokes
     this.generateNewJokes = this.generateNewJokes.bind(this);
+    this.vote = this.vote.bind(this);
   }
  
   // method to empty the joke list (update state)
   generateNewJokes() {
-    console.log("YOU CLICKED ON THE BUTTON");
-    console.log("JOKES: ", this.state.jokes);
     this.setState({ jokes: this.jokesInitialState });
-    this.vote = this.vote.bind(this);
-    console.log("JOKES AFTER CLICK: ", this.state.jokes);
   }
 
   /* method to change vote for this id by delta (+1 or -1) */
@@ -28,7 +25,7 @@ class JokeListClassBased extends Component {
     this.setState( { jokes: [...allJokes] });
   }
 
-  async componentDidMount() {
+  async getJokes() {
     let j = [...this.state.jokes];
     let seenJokes = new Set();
     try {
@@ -42,7 +39,7 @@ class JokeListClassBased extends Component {
           seenJokes.add(jokeObj.id);
           j.push({ ...jokeObj, votes: 0 });
         } else {
-          console.error("duplate found!");
+          console.error("duplicate found!");
         } 
       }
       this.setState({jokes: j})  // update state for jokes
@@ -51,27 +48,12 @@ class JokeListClassBased extends Component {
     }
   }
 
-  async componentDidUpdate() {
-    let j = [...this.state.jokes];
-    let seenJokes = new Set();
-    try {
-      while (j.length < this.props.numJokesToGet) {
-        let res = await axios.get("https://icanhazdadjoke.com", {
-          headers: { Accept: "application/json" }
-        });
-        let { status, ...jokeObj } = res.data;
-  
-        if (!seenJokes.has(jokeObj.id)) {
-          seenJokes.add(jokeObj.id);
-          j.push({ ...jokeObj, votes: 0 });
-        } else {
-          console.error("duplate found!");
-        } 
-      }
-      this.setState({jokes: j})  // update state for jokes
-    } catch (e) {
-      console.log(e);
-    }
+  componentDidMount() {
+    if (this.state.jokes.length === 0) this.getJokes();
+  }
+
+  componentDidUpdate() {
+    if (this.state.jokes.length === 0) this.getJokes();
   }
   
   render() {
