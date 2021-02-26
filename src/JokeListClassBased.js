@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
-import Joke from "./Joke";
+// import Joke from "./Joke";
+import JokeClassBased from "./JokeClassBased";
 import "./JokeList.css";
 
 class JokeListClassBased extends Component {
@@ -12,21 +13,20 @@ class JokeListClassBased extends Component {
     this.generateNewJokes = this.generateNewJokes.bind(this);
   }
  
-  //
-
-
   // method to empty the joke list (update state)
   generateNewJokes() {
     console.log("YOU CLICKED ON THE BUTTON");
     console.log("JOKES: ", this.state.jokes);
     this.setState({ jokes: this.jokesInitialState });
+    this.vote = this.vote.bind(this);
     console.log("JOKES AFTER CLICK: ", this.state.jokes);
   }
 
   /* method to change vote for this id by delta (+1 or -1) */
-  // vote(id, delta) {
-
-  // }
+  vote(id, delta) {
+    const allJokes = this.state.jokes.map(j => (j.id === id ? { ...j, votes: j.votes + delta} : j));
+    this.setState( { jokes: [...allJokes] });
+  }
 
   async componentDidMount() {
     let j = [...this.state.jokes];
@@ -84,7 +84,7 @@ class JokeListClassBased extends Component {
           </button>
 
           {sortedJokes.map(j => (
-            <Joke text={j.joke} key={j.id} id={j.id} votes={j.votes} />
+            <JokeClassBased text={j.joke} key={j.id} id={j.id} votes={j.votes} vote={this.vote}/>
           ))}
         </div>
       );
