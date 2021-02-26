@@ -4,16 +4,23 @@ import Joke from "./Joke";
 import "./JokeList.css";
 
 class JokeListClassBased extends Component {
-  static defaultProps = {numJokesToGet: 10}
+  static defaultProps = { numJokesToGet: 10 }
   constructor({ numJokesToGet }) {
     super({ numJokesToGet });
-    this.state = {jokes: []};  // initial state for jokes
+    this.jokesInitialState = [];
+    this.state = { jokes: this.jokesInitialState };  // initial state for jokes
     this.generateNewJokes = this.generateNewJokes.bind(this);
   }
+ 
+  //
+
 
   // method to empty the joke list (update state)
   generateNewJokes() {
-    this.setState({ jokes: [] });
+    console.log("YOU CLICKED ON THE BUTTON");
+    console.log("JOKES: ", this.state.jokes);
+    this.setState({ jokes: this.jokesInitialState });
+    console.log("JOKES AFTER CLICK: ", this.state.jokes);
   }
 
   /* method to change vote for this id by delta (+1 or -1) */
@@ -45,7 +52,26 @@ class JokeListClassBased extends Component {
   }
 
   async componentDidUpdate() {
-
+    let j = [...this.state.jokes];
+    let seenJokes = new Set();
+    try {
+      while (j.length < this.props.numJokesToGet) {
+        let res = await axios.get("https://icanhazdadjoke.com", {
+          headers: { Accept: "application/json" }
+        });
+        let { status, ...jokeObj } = res.data;
+  
+        if (!seenJokes.has(jokeObj.id)) {
+          seenJokes.add(jokeObj.id);
+          j.push({ ...jokeObj, votes: 0 });
+        } else {
+          console.error("duplate found!");
+        } 
+      }
+      this.setState({jokes: j})  // update state for jokes
+    } catch (e) {
+      console.log(e);
+    }
   }
   
   render() {
